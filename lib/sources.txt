@@ -1,5 +1,0 @@
-https://flutter.io/cookbook/networking/named-routes/
-https://pub.dartlang.org/packages/flutter_typeahead
-https://flutter.io/cookbook/images/network-image/
-https://docs.flutter.io/flutter/widgets/Navigator/pop.html
-https://flutter.io/cookbook/forms/retrieve-input/
