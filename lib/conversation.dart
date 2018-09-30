@@ -1,30 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:whatasap/session.dart';
 import 'package:whatasap/main.dart';
-import 'package:whatasap/conversation.dart';
 import 'package:whatasap/newConversation.dart';
+import 'package:whatasap/session.dart';
 import 'dart:convert';
 import 'dart:io';
 
 
-class Chats extends StatefulWidget {
-  static String tag = 'Chats';
+class Conversation extends StatefulWidget {
+
+  static String tag = 'Conversation';
+  static String uid = '';
+
+  Conversation(String u){
+    uid = u;
+  }
+
   @override
-  _ChatsState createState() => new _ChatsState();
+  _ConversationState createState() => new _ConversationState(uid);
 }
 
-class _ChatsState extends State<Chats> {
+class _ConversationState extends State<Conversation> {
+  static String uid = '';
+
+  _ConversationState(String u){
+    uid = u;
+  }
+
   Map dd;
   bool loading = true;
   int length = 0;
   makeRequest() async {
 
+    var parameters = new Map();
+    parameters['other_id'] = uid;
+    print(uid);
+
+
     Session s = new Session();
-    s.get('http://10.130.154.56:8080/whatsap/AllConversations').then((response)
+    s.post('http://10.130.154.56:8080/whatsap/ConversationDetail',parameters).then((response)
     {
       var decodedJSON = json.decode(response);
       print(response);
-      print(decodedJSON['data'][0]['name']);
+//      print(decodedJSON['data'][0]['name']);
       setState(() {
         dd = decodedJSON;
 
@@ -47,13 +64,15 @@ class _ChatsState extends State<Chats> {
 //    print(dd['data'][1]['name']);
    return new Scaffold(
       appBar: new AppBar(
-        title: const Text('Chats'),
+        title: const Text('Conversation Details'),
         actions: <Widget>[
           // action button
           IconButton(
             icon: Icon(Icons.home),
             onPressed: () {
-//              redirecthome();
+              Navigator.pop(
+                  context
+              );
             },
           ),
           // action button
@@ -65,7 +84,7 @@ class _ChatsState extends State<Chats> {
                   new MaterialPageRoute(
                       builder: (BuildContext context) =>
                       new NewConversation()));
-              },
+            },
           ),
           // overflow menu
           IconButton(
@@ -75,10 +94,10 @@ class _ChatsState extends State<Chats> {
               s.get('http://10.130.154.56:8080/whatsap/Logout').then((response)
               {
                 Navigator.push(
-                context,
-                new MaterialPageRoute(
-                builder: (BuildContext context) =>
-                new MyApp()));
+                    context,
+                    new MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                        new MyApp()));
 
               });
             },
@@ -95,24 +114,25 @@ class _ChatsState extends State<Chats> {
           'Loading'
       );
     }else{
-      print(dd['data'].length);
     return new ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemCount: dd['data'].length,
         itemBuilder: (BuildContext _context, int i) {
           return new ListTile(
                 title: new Text(
-                  dd['data'][i]['name'],
+                  dd['data'][i]['uid'],
                 ),
-                subtitle:new Text(dd['data'][i]['last_timestamp'].toString()),
+              subtitle: new Text(dd['data'][i]['text']),
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                          new Conversation(dd['data'][i]['uid'])));
+//              Navigator.push(
+//                  context,
+//                  new MaterialPageRoute(
+//                      builder: (BuildContext context) =>
+//                      new SecondPage(data[i])));
                 }
             );
+
+
         });
     }
   }
