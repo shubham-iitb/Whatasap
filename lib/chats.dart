@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:whatasap/session.dart';
+import 'package:whatasap/conversation.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -11,7 +12,7 @@ class Chats extends StatefulWidget {
 }
 
 class _ChatsState extends State<Chats> {
-  var dd;
+  Map dd;
   bool loading = true;
   int length = 0;
   makeRequest() async {
@@ -79,27 +80,26 @@ class _ChatsState extends State<Chats> {
           'Loading'
       );
     }else{
+      print(dd['data'].length);
     return new ListView.builder(
         padding: const EdgeInsets.all(16.0),
-        itemCount: 1,
+        itemCount: dd['data'].length,
         itemBuilder: (BuildContext _context, int i) {
           return new ListTile(
                 title: new Text(
                   dd['data'][i]['name'],
                 ),
-                subtitle: new Text(dd['data'][i]['last_timestamp']),
+                subtitle:new Text(dd['data'][i]['last_timestamp'].toString()),
                 onTap: () {
-//              Navigator.push(
-//                  context,
-//                  new MaterialPageRoute(
-//                      builder: (BuildContext context) =>
-//                      new SecondPage(data[i])));
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                          new Conversation(dd['data'][i]['uid'])));
                 }
             );
-
-
         });
-  }
+    }
   }
 
 }
