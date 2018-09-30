@@ -4,8 +4,6 @@ import 'package:whatasap/main.dart';
 import 'package:whatasap/conversation.dart';
 import 'package:whatasap/newConversation.dart';
 import 'dart:convert';
-import 'dart:io';
-
 
 class Chats extends StatefulWidget {
   static String tag = 'Chats';
@@ -15,6 +13,7 @@ class Chats extends StatefulWidget {
 
 class _ChatsState extends State<Chats> {
   Map dd;
+  String text = '';
   bool loading = true;
   int length = 0;
   makeRequest() async {
@@ -44,8 +43,8 @@ class _ChatsState extends State<Chats> {
 
   @override
   Widget build(BuildContext context) {
-//    print(dd['data'][1]['name']);
-   return new Scaffold(
+
+    return new Scaffold(
       appBar: new AppBar(
         title: const Text('Chats'),
         actions: <Widget>[
@@ -85,8 +84,35 @@ class _ChatsState extends State<Chats> {
           ),
         ],
       ),
-      body: _buildSuggestions(),
-    );
+       body: Center(
+         child: Column(
+//          shrinkWrap: true,
+//          padding: EdgeInsets.only(left: 24.0, right: 24.0),
+           children: <Widget>[
+//             Expanded(child:
+             TextField(
+
+               onChanged: (txt){
+                 print(txt);
+                 text = txt;
+                 setState(() {
+                   
+                 });
+//                 final filteredMap = new Map.fromIterable(
+//                     dd['data'].keys.where((k) => k['name'].toString().contains(text)), key: (k) => k, value: (k) => dd[k]);
+//                 dd = filteredMap;
+//                 makeRequest();
+                 },
+             ),
+             Expanded(
+                 child:_buildSuggestions()
+             )
+           ],
+         ),
+       ),
+//       body: _buildSuggestions(),
+   );
+
   }
 
   Widget _buildSuggestions() {
@@ -100,10 +126,22 @@ class _ChatsState extends State<Chats> {
         padding: const EdgeInsets.all(16.0),
         itemCount: dd['data'].length,
         itemBuilder: (BuildContext _context, int i) {
+          if(dd['data'][i]['name'].toString().contains(text) || dd['data'][i]['uid'].toString().contains(text) || text=='')
           return new ListTile(
-                title: new Text(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                  new Container(
+                      alignment: Alignment.centerLeft
+                    ,
+                child: new Text(
                   dd['data'][i]['name'],
-                ),
+                )),
+                new Container(
+                    alignment: Alignment.centerRight
+                    ,child: new Text(
+                  dd['data'][i]['uid'],
+                )),],),
                 subtitle:new Text(dd['data'][i]['last_timestamp'].toString()),
                 onTap: () {
                   Navigator.push(
