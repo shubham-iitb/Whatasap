@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:whatasap/main.dart';
+import 'package:whatasap/chats.dart';
 import 'package:whatasap/newConversation.dart';
 import 'package:whatasap/session.dart';
 import 'dart:convert';
@@ -21,6 +22,15 @@ class Conversation extends StatefulWidget {
 
 class _ConversationState extends State<Conversation> {
   static String uid = '';
+  final myController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the Widget is disposed
+    myController.dispose();
+    super.dispose();
+  }
+
 
   _ConversationState(String u){
     uid = u;
@@ -41,13 +51,10 @@ class _ConversationState extends State<Conversation> {
     {
       var decodedJSON = json.decode(response);
       print(response);
-//      print(decodedJSON['data'][0]['name']);
       setState(() {
         dd = decodedJSON;
-
         loading = false;
       });
-//      print(dd['data'][0]['name']);
 
     });
   }
@@ -61,8 +68,57 @@ class _ConversationState extends State<Conversation> {
 
   @override
   Widget build(BuildContext context) {
-//    print(dd['data'][1]['name']);
-   return new Scaffold(
+
+    final _writeMessage = TextField(
+      keyboardType: TextInputType.text,
+      autofocus: false,
+//      initialValue: '',
+      controller: myController,
+      decoration: InputDecoration(
+        hintText: 'Write Message',
+        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+      ),
+    );
+
+    final sendMessage = IconButton(
+      icon: Icon(Icons.send),
+      onPressed: () {
+        if(_writeMessage.toString()!=null) {
+          print('adfadsfadsfasdfadsfasd');
+
+          print(myController.text);
+          print('adfadsfadsfasdfadsfasd');
+//          String text = _writeMessage.controller.text;
+//          _writeMessage.toString();
+          var data = new Map();
+          data['other_id'] = uid;
+          data['newMsg'] = myController.text;
+
+          Session s = new Session();
+          String temp = "?other_id="+uid.toString()+"&msg="+myController.text.toString();
+          String urlsend = "http://10.130.154.56:8080/whatsap/NewMessage"+temp;
+          s.get(urlsend);
+          setState(() {
+            loading = true;
+            build(context);
+
+          }
+          );
+//          loading = true;
+//          makeRequest();
+
+
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                  new Conversation(uid)));
+        }
+        }
+    );
+
+    return new Scaffold(
       appBar: new AppBar(
         title: const Text('Conversation Details'),
         actions: <Widget>[
@@ -70,9 +126,12 @@ class _ConversationState extends State<Conversation> {
           IconButton(
             icon: Icon(Icons.home),
             onPressed: () {
-              Navigator.pop(
-                  context
-              );
+
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                      new Conversation(uid)));
             },
           ),
           // action button
@@ -104,7 +163,28 @@ class _ConversationState extends State<Conversation> {
           ),
         ],
       ),
-      body: _buildSuggestions(),
+//      body:             _buildSuggestions(),
+
+      body: Center(
+        child: Column(
+//          shrinkWrap: true,
+//          padding: EdgeInsets.only(left: 24.0, right: 24.0),
+          children: <Widget>[
+            Expanded(
+            child:_buildSuggestions()
+            ),
+
+//            SizedBox(height: 48.0),
+            Row(children: <Widget>[
+              new Expanded(child: _writeMessage),
+              new Expanded(child: sendMessage),
+//            SizedBox(height: 8.0),
+//            SizedBox(height: 24.0),
+            ])
+
+          ],
+        ),
+      ),
     );
   }
 
@@ -124,11 +204,6 @@ class _ConversationState extends State<Conversation> {
                 ),
               subtitle: new Text(dd['data'][i]['text']),
                 onTap: () {
-//              Navigator.push(
-//                  context,
-//                  new MaterialPageRoute(
-//                      builder: (BuildContext context) =>
-//                      new SecondPage(data[i])));
                 }
             );
 
@@ -137,30 +212,4 @@ class _ConversationState extends State<Conversation> {
     }
   }
 
-}
-
-class SecondPage extends StatelessWidget {
-  SecondPage(this.data);
-  final data;
-  @override
-  Widget build(BuildContext context) => new Scaffold(
-      appBar: new AppBar(title: new Text('Second Page')),
-      body: new Center(
-        child: new Container(
-          width: 150.0,
-          height: 150.0,
-          decoration: new BoxDecoration(
-            color: const Color(0xff7c94b6),
-            image: new DecorationImage(
-              image: new NetworkImage(data["picture"]["large"]),
-              fit: BoxFit.cover,
-            ),
-            borderRadius: new BorderRadius.all(new Radius.circular(75.0)),
-            border: new Border.all(
-              color: Colors.red,
-              width: 4.0,
-            ),
-          ),
-        ),
-      ));
 }
