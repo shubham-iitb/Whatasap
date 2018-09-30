@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:whatasap/session.dart';
 import 'package:whatasap/main.dart';
+import 'package:whatasap/conversation.dart';
+
 import 'package:whatasap/chats.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'dart:convert';
@@ -64,6 +66,7 @@ class CreateConvFormState extends State<CreateConvForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _typeAheadController = TextEditingController();
   List dd;
+  String uid;
 
   @override
   Widget build(BuildContext context) {
@@ -142,15 +145,20 @@ class CreateConvFormState extends State<CreateConvForm> {
         Session s = new Session();
         String urlsend = "http://10.130.154.56:8080/whatsap/CreateConversation";
         print(suggestion.toString());
-        String tokens = suggestion.split("[,]+");
-        print(tokens[1]);
-        print(tokens[0]);
-        urlsend+= "?other_id="+tokens[1].toString();
+        uid = suggestion.split(",")[0].toString().substring(5);
+//        String uid = suggestion.split(",")[1].substring(5);
+        print(uid);
+        urlsend+= "?other_id="+uid.toString();
         s.get(urlsend).then((response)
         {
           print(response);
           print('----------------------------------------------------------');
         });
+      Navigator.push(
+      context,
+      new MaterialPageRoute(
+      builder: (BuildContext context) =>
+      new Conversation(uid.toString())));
 
       },
       validator: (value) {
