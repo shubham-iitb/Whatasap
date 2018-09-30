@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:whatasap/main.dart';
 import 'package:whatasap/chats.dart';
-import 'package:whatasap/newConversation.dart';
+import 'package:whatasap/conversation.dart';
 import 'package:whatasap/session.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -100,20 +100,10 @@ class _ConversationState extends State<Conversation> {
           String urlsend = "http://10.130.154.56:8080/whatsap/NewMessage"+temp;
           s.get(urlsend);
           setState(() {
-            loading = true;
-            build(context);
-
           }
           );
 //          loading = true;
 //          makeRequest();
-
-
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                  new Conversation(uid)));
         }
         }
     );
@@ -131,7 +121,7 @@ class _ConversationState extends State<Conversation> {
                   context,
                   new MaterialPageRoute(
                       builder: (BuildContext context) =>
-                      new Conversation(uid)));
+                      new Chats()));
             },
           ),
           // action button
@@ -142,7 +132,7 @@ class _ConversationState extends State<Conversation> {
                   context,
                   new MaterialPageRoute(
                       builder: (BuildContext context) =>
-                      new NewConversation()));
+                      new Conversation(uid)));
             },
           ),
           // overflow menu
