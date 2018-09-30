@@ -7,6 +7,7 @@
 
 import 'dart:async';
 import 'package:http/http.dart' as http;
+const String URL = 'http://10.130.154.56:8080/whatsap';
 
 class Session {
   static final Session _session = new Session._internal();
