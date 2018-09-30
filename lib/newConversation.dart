@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:whatasap/session.dart';
 import 'package:whatasap/main.dart';
 import 'package:whatasap/chats.dart';
-import 'dart:convert';
-import 'dart:io';
-
 
 class NewConversation extends StatelessWidget {
   // This widget is the root of your application.
@@ -106,10 +103,12 @@ class CreateConvFormState extends State<CreateConvForm> {
               print('UserID: ${_data.userid }');
 
               var data = new Map();
-              data['other_id'] = _data.userid;
+//              data['other_id'] = _data.userid;
 
               Session s = new Session();
-              s.post('http://10.130.154.56:8080/whatsap/CreateConversationServlet',data).then((response)
+              String urlsend = "http://10.130.154.56:8080/whatsap/CreateConversation";
+              urlsend+= "?other_id="+_data.userid;
+              s.get(urlsend).then((response)
               {
                 print(response);
                 print('----------------------------------------------------------');
