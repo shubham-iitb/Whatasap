@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:whatasap/session.dart';
 import 'dart:convert';
+import 'dart:io';
 
 
 class Chats extends StatefulWidget {
@@ -10,16 +11,24 @@ class Chats extends StatefulWidget {
 }
 
 class _ChatsState extends State<Chats> {
-  var data;
+  var dd;
+  bool loading = true;
+  int length = 0;
   makeRequest() async {
 
     Session s = new Session();
     s.get('http://10.130.154.56:8080/whatsap/AllConversations').then((response)
     {
-      final decodedJSON = json.decode(response);
+      var decodedJSON = json.decode(response);
       print(response);
       print(decodedJSON['data'][0]['name']);
-      data = decodedJSON;
+      setState(() {
+        dd = decodedJSON;
+
+        loading = false;
+      });
+//      print(dd['data'][0]['name']);
+
     });
   }
 
@@ -27,13 +36,13 @@ class _ChatsState extends State<Chats> {
   @override
   void initState() {
     this.makeRequest();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(data['data'][1]['name']);
-    print('adsaf');
-    return new Scaffold(
+//    print(dd['data'][1]['name']);
+   return new Scaffold(
       appBar: new AppBar(
         title: const Text('Chats'),
         actions: <Widget>[
@@ -65,25 +74,32 @@ class _ChatsState extends State<Chats> {
   }
 
   Widget _buildSuggestions() {
-//    print(data['data'][0]['name']);
+    if(loading) {
+      return new Text(
+          'Loading'
+      );
+    }else{
     return new ListView.builder(
         padding: const EdgeInsets.all(16.0),
+        itemCount: 1,
         itemBuilder: (BuildContext _context, int i) {
           return new ListTile(
-            title: new Text(
-              data['data'][i]['name'].asPascalCase,
-
-            ),
-            subtitle: new Text(data['data'][i]['last_timestamp']),
-            onTap: () {
+                title: new Text(
+                  dd['data'][i]['name'],
+                ),
+                subtitle: new Text(dd['data'][i]['last_timestamp']),
+                onTap: () {
 //              Navigator.push(
 //                  context,
 //                  new MaterialPageRoute(
 //                      builder: (BuildContext context) =>
 //                      new SecondPage(data[i])));
-            }
-          );
+                }
+            );
+
+
         });
+  }
   }
 
 }
