@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:whatasap/chats.dart';
 import 'package:whatasap/session.dart';
+import 'dart:convert';
+
 import 'dart:collection';
 
 void main() => runApp(new MyApp());
+
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -28,6 +31,11 @@ class MyApp extends StatelessWidget {
         ),
         body: MyLoginForm(),
       ),
+      routes: {
+//        '/': (context) => MyLoginForm(),
+        // When we navigate to the "/second" route, build the SecondScreen Widget
+        '/chats': (context) => Chats(),
+    }
     );
   }
 }
@@ -65,7 +73,7 @@ class MyLoginFormState extends State<MyLoginForm> {
     final username = TextFormField(
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
-      initialValue: 'alucard@gmail.com',
+      initialValue: 'p1',
       validator: (value) {
         if (value.isEmpty) {
           return 'Please enter some text';
@@ -83,7 +91,7 @@ class MyLoginFormState extends State<MyLoginForm> {
 
     final password = TextFormField(
       autofocus: false,
-      initialValue: 'some password',
+      initialValue: 'Person1',
       obscureText: true,
       validator: (value) {
         if (value.isEmpty) {
@@ -113,32 +121,30 @@ class MyLoginFormState extends State<MyLoginForm> {
 //            Navigator.of(context).pushNamed(HomePage.tag);
             if (_formKey.currentState.validate()) {
               // If the form is valid, we want to show a Snackbar
-                _formKey.currentState.save();
+              _formKey.currentState.save();
 
-                print('Printing the login data.');
-                print('Email: ${_data.userid }');
-                print('Password: ${_data.password}');
-
-//                Map<String, String> logindata = new HashMap<String, String>()
-//                {
-//                  {
-//                    put("userid", _data.userid);
-//                    put("password",_data.password);
-//                  }
-//                };
+              print('Printing the login data.');
+              print('Email: ${_data.userid }');
+              print('Password: ${_data.password}');
 
               var colors = new Map();
               colors['userid'] = _data.userid;
               colors['password'] = _data.password;
 
               Session s = new Session();
-              var response = s.post('http://10.130.154.56:8080/whatsap/LoginServlet',colors);
-              print(response);
+              s.post('http://10.130.154.56:8080/whatsap/LoginServlet',colors).then((response)
+              {
+                final decodedJSON = json.decode(response);
+                print(response);
+                if(decodedJSON["status"]){
+                  print('Logged in');
+                  Navigator.pushNamed(context, '/chats');
+                }
+                else{
+                  print('adfasdf');
+                }
+              });
 
-//              var extractdata = json.decode(response);
-//              if(extractdata["results"] == 'true'){
-//                MaterialPageRoute(builder: (context) => Chats());
-//              }
 
 
                 //Map <String,String> data = new Map<String,String> (username.toString(),password.toString());
