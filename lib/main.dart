@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:whatasap/login.dart';
+import 'package:whatasap/session.dart';
+import 'dart:collection';
 
 void main() => runApp(new MyApp());
 
@@ -38,6 +40,14 @@ class MyLoginForm extends StatefulWidget {
   }
 }
 
+
+
+class _LoginData {
+  String userid = '';
+  String password = '';
+}
+
+
 // Create a corresponding State class. This class will hold the data related to
 // the form.
 class MyLoginFormState extends State<MyLoginForm> {
@@ -45,6 +55,7 @@ class MyLoginFormState extends State<MyLoginForm> {
   // us to validate the form
   //
   // Note: This is a GlobalKey<FormState>, not a GlobalKey<MyLoginFormState>!
+  _LoginData _data = new _LoginData();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -59,7 +70,11 @@ class MyLoginFormState extends State<MyLoginForm> {
         if (value.isEmpty) {
           return 'Please enter some text';
         }
-      },decoration: InputDecoration(
+      },
+      onSaved: (String value) {
+        this._data.userid = value;
+      },
+      decoration: InputDecoration(
         hintText: 'Username',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
@@ -74,6 +89,9 @@ class MyLoginFormState extends State<MyLoginForm> {
         if (value.isEmpty) {
           return 'Please enter some text';
         }
+      },
+      onSaved: (String value) {
+        this._data.password = value;
       },
       decoration: InputDecoration(
         hintText: 'Password',
@@ -95,6 +113,29 @@ class MyLoginFormState extends State<MyLoginForm> {
 //            Navigator.of(context).pushNamed(HomePage.tag);
             if (_formKey.currentState.validate()) {
               // If the form is valid, we want to show a Snackbar
+                _formKey.currentState.save();
+
+                print('Printing the login data.');
+                print('Email: ${_data.userid }');
+                print('Password: ${_data.password}');
+
+//                Map<String, String> logindata = new HashMap<String, String>()
+//                {
+//                  {
+//                    put("userid", _data.userid);
+//                    put("password",_data.password);
+//                  }
+//                };
+
+              var colors = new Map();
+              colors['userid'] = _data.userid;
+              colors['password'] = _data.password;
+
+                Session s = new Session();
+                s.post('http://localhost.8080/lab8/LoginServlet',colors);
+
+                //Map <String,String> data = new Map<String,String> (username.toString(),password.toString());
+
               Scaffold.of(context)
                   .showSnackBar(SnackBar(content: Text('Processing Data')));
             }
