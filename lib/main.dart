@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:whatasap/login.dart';
+import 'package:whatasap/chats.dart';
 import 'package:whatasap/session.dart';
 import 'dart:collection';
 
@@ -131,8 +131,15 @@ class MyLoginFormState extends State<MyLoginForm> {
               colors['userid'] = _data.userid;
               colors['password'] = _data.password;
 
-                Session s = new Session();
-                s.post('http://localhost.8080/lab8/LoginServlet',colors);
+              Session s = new Session();
+              var response = s.post('http://10.130.154.56:8080/whatsap/LoginServlet',colors);
+              print(response);
+
+//              var extractdata = json.decode(response);
+//              if(extractdata["results"] == 'true'){
+//                MaterialPageRoute(builder: (context) => Chats());
+//              }
+
 
                 //Map <String,String> data = new Map<String,String> (username.toString(),password.toString());
 
