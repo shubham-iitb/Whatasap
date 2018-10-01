@@ -69,13 +69,22 @@ class MyLoginFormState extends State<MyLoginForm> {
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey we created above
 
+    final logo = Hero(
+      tag: 'hero',
+      child: CircleAvatar(
+        backgroundColor: Colors.transparent,
+        radius: 48.0,
+        child: Image.network('http://www.ovalion.com/img/logo-design-kerala.png'),
+      ),
+    );
+
     final username = TextFormField(
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
-      initialValue: 'p1',
+      initialValue: '',
       validator: (value) {
         if (value.isEmpty) {
-          return 'Please enter some text';
+          return 'Please enter username';
         }
       },
       onSaved: (String value) {
@@ -90,11 +99,11 @@ class MyLoginFormState extends State<MyLoginForm> {
 
     final password = TextFormField(
       autofocus: false,
-      initialValue: 'Person1',
+      initialValue: '',
       obscureText: true,
       validator: (value) {
         if (value.isEmpty) {
-          return 'Please enter some text';
+          return 'Please enter password';
         }
       },
       onSaved: (String value) {
@@ -131,7 +140,7 @@ class MyLoginFormState extends State<MyLoginForm> {
               colors['password'] = _data.password;
 
               Session s = new Session();
-              s.post('http://10.130.154.56:8080/whatsap/LoginServlet',colors).then((response)
+              s.post(URL+'/LoginServlet',colors).then((response)
 //              s.post('http://127.0.0.1:8080/mobile/LoginServlet',colors).then((response)
               {
                 final decodedJSON = json.decode(response);
@@ -141,16 +150,10 @@ class MyLoginFormState extends State<MyLoginForm> {
                   Navigator.pushNamed(context, '/chats');
                 }
                 else{
-                  print('adfasdf');
+                    Scaffold.of(context).showSnackBar(SnackBar(content: Text('Login Failed')));
+
                 }
               });
-
-
-
-                //Map <String,String> data = new Map<String,String> (username.toString(),password.toString());
-
-              Scaffold.of(context)
-                  .showSnackBar(SnackBar(content: Text('Processing Data')));
             }
           },
           color: Colors.lightBlueAccent,
@@ -159,28 +162,26 @@ class MyLoginFormState extends State<MyLoginForm> {
       ),
     );
 
-    final forgotLabel = FlatButton(
-      child: Text(
-        'Forgot password?',
-        style: TextStyle(color: Colors.black54),
-      ),
-      onPressed: () {
 
-      },
-    );
-
-
-    return Form(
+    return new ListView(
+//        spacing: 8.0, // gap between adjacent chips
+//      runSpacing: 4.0, // gap between lines
+//      direction: Axis.horizontal, // main axis (rows or columns)
+      children: <Widget>[Form(
       key: _formKey,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
+          SizedBox(height: 48.0),
+          logo,
+          SizedBox(height: 48.0),
           username,
+          SizedBox(height: 16.0),
           password,
+          SizedBox(height: 24.0),
           loginButton,
-          forgotLabel
         ],
       ),
-    );
+    )]);
   }
 }
