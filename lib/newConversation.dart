@@ -49,6 +49,7 @@ class NewConversationState extends State<NewConversation> {
 
         textFieldConfiguration: TextFieldConfiguration(
           autofocus: true,
+
           controller: this._typeAheadController,
             textAlign: TextAlign.center,
             decoration: InputDecoration(
@@ -111,12 +112,28 @@ class NewConversationState extends State<NewConversation> {
         {
           print(response);
           print('----------------------------------------------------------');
+          if(json.decode(response)['status']){
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                    new Conversation(uid.toString(),name)));
+          }
+          else{
+            return showDialog(context: context,barrierDismissible: false,builder: (BuildContext context){
+              return new AlertDialog(title: new Text('Error'),content: new Text('Cannot create conversation'),
+                actions: <Widget>[new FlatButton(child: new Text('Ok'), onPressed: (){
+                  Navigator.pushReplacement(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                          new NewConversation()));})],);
+
+            });
+          }
+
         });
-        Navigator.push(
-        context,
-        new MaterialPageRoute(
-        builder: (BuildContext context) =>
-        new Conversation(uid.toString(),name)));
+
 
       },
     );
